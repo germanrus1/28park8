@@ -31,7 +31,6 @@ export default {
   },
   methods: {
     onSelected(payload) {
-      this.
       this.$emit("drawText", payload.name, this.who);
     },
   }

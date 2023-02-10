@@ -51,4 +51,24 @@
 
     }
   }
+  .zi-100 {
+    z-index: 100;
+    position: relative;
+  }
+  .zi-200 {
+    z-index: 200;
+    position: relative;
+  }
+  .zi-300 {
+    z-index: 300;
+    position: relative;
+  }
+  .zi-500 {
+    z-index: 500;
+    position: relative;
+  }
+  .zi-600 {
+    z-index: 600;
+    position: relative;
+  }
 </style>

@@ -36,5 +36,16 @@ export default {
     border: 0.052vw solid #FFFFFF;
     box-shadow: 0 0.573vw 0.99vw rgba(31, 91, 215, 0.8);
   }
+  &.blue {
+    background: #1F5BD7;
+    box-shadow: 0 0.573vw 0.99vw rgba(31, 91, 215, 0.8);
+    border-radius: 0.625vw;
+    width: 13.958vw;
+    height: 2.65625vw;
+    font-style: normal;
+    font-weight: 375;
+    font-size: 1.667vw;
+    line-height: 97%;
+  }
  }
 </style>

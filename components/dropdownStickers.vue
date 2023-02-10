@@ -1,10 +1,12 @@
 <template>
   <custom-button :text="text" class="zi-600" @click="toggle"></custom-button>
   <div class="content-dropdown zi-500" :class="active ? 'isActive':''">
-    <div class="content-textarea">
-      <textarea v-model="textModel" @change="this.$emit('drawDescription', textModel)"></textarea>
+    <div class="content">
       <div class="button-content">
         <custom-button text="Без текста" classes="blue" @click="this.$emit('clearDescription')"></custom-button>
+      </div>
+      <div class="stickers">
+        <img v-for="i in 13" :id="'bg-' + (i - 1)" :src="'/stickers/sticker-' + (i - 1) +'.png'" :alt="'/stickers/sticker-' + (i - 1) +'.png'">
       </div>
     </div>
   </div>
@@ -38,7 +40,7 @@ export default {
 <style lang="scss" scoped>
 .button-content {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 0.78125vw
 }
 .content-dropdown {
@@ -53,11 +55,11 @@ export default {
   &.isActive {
     display: flex;
   }
-  .content-textarea {
+  .content {
     width: 20.15625vw;
     height: 16.042vw;
     border-radius: 0 0 1.5625vw 1.5625vw;
-    background: #FFFFFF;
+    background: none;
     margin-top: 1.8vw;
   }
   textarea {

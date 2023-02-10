@@ -1,5 +1,5 @@
 <template>
-  <div class="content-generator">
+  <div class="content-generator" >
     <div class="generator-content">
       <!--      Левая часть-->
       <div class="generator-content__left">
@@ -7,12 +7,12 @@
           Выберите фон
         </div>
         <div class="canvas-wrapper">
-          <canvas class="canvas-layer" style="z-index: 1" id="img-background" height="400" width="400">Ваш браузер не поддерживает это приложение.
+          <canvas class="canvas-layer" style="z-index: 1" id="img-background" height="600" width="600">Ваш браузер не поддерживает это приложение.
             Обновитесь или скачайте другой браузер
           </canvas>
-          <canvas class="canvas-layer" style="z-index: 2" id="img-description" height="400" width="400"></canvas>
-          <canvas class="canvas-layer" style="z-index: 3" id="img-fromwhom" height="400" width="400"></canvas>
-          <canvas class="canvas-layer" style="z-index: 3" id="img-forwhom" height="400" width="400"></canvas>
+          <canvas class="canvas-layer" style="z-index: 2" id="img-description" height="600" width="600"></canvas>
+          <canvas class="canvas-layer" style="z-index: 3" id="img-fromwhom" height="600" width="600"></canvas>
+          <canvas class="canvas-layer" style="z-index: 3" id="img-forwhom" height="600" width="600"></canvas>
 
         </div>
         <div class="control-panel">
@@ -21,16 +21,25 @@
           <button-circle icon="next" @click="nextBg"></button-circle>
         </div>
         <div style="display: none">
-          <img v-for="i in 3" :id="'bg-' + i" :src="'/backgrounds/image' + i +'.png'" :alt="'/background/image' + i +'.png'">
+          <img v-for="i in this.countBG" :id="'bg-' + (i - 1)" :src="'/backgrounds/background-' + (i - 1) +'.png'" :alt="'/background/background-' + (i - 1) +'.png'">
         </div>
       </div>
       <!--      Правая часть-->
       <div class="generator-content__right">
         <div class="description">
-          <custom-button text="Добавить текст"/>
-<!--          <textarea v-model="descriptionModel" @change="drawDescription" class="description__textarea" rows="5" cols="30" placeholder="Введите текст" name="description"></textarea>-->
+          <dropdown-textarea
+              text="Добавить текст"
+              v-on:clearDescription="clearDescription"
+              v-on:drawDescription="drawDescription"
+          ></dropdown-textarea>
         </div>
-        <custom-button text="Выбрать наклейку" />
+        <div class="description">
+          <dropdown-stickers
+              text="Выбрать наклейку"
+              v-on:clearDescription="clearDescription"
+              v-on:drawDescription="drawDescription"
+          ></dropdown-stickers>
+        </div>
         <div>
           <div class="zi-200">
             <custom-dropdown
@@ -56,7 +65,7 @@
         <div>
           <custom-button text="Создать открытку" @click="mergeLayers" classes="create"></custom-button>
           <a id="downloadResult" @click="downloadResult" target="_blank" class="download">Сохранить</a>
-          <canvas id="img-result" style="" height="400" width="400"></canvas>
+          <canvas id="img-result" style="" height="600" width="600"></canvas>
         </div>
       </div>
     </div>
@@ -67,6 +76,8 @@
 import CustomButton from "../components/customButton";
 import CustomDropdown from "../components/customDropdown";
 import ButtonCircle from "../components/buttonCircle"
+import DropdownTextarea from "../components/dropdownTextarea"
+import DropdownStickers from "../components/dropdownStickers"
 
 export default {
   name: "generator",
@@ -74,9 +85,13 @@ export default {
     CustomDropdown,
     CustomButton,
     ButtonCircle,
+    DropdownTextarea,
+    DropdownStickers,
   },
   data() {
     return {
+      canvasHeight: 600,
+      canvasWidth: 600,
       canvasBG: null,
       ctxBG: null,
       canvasForWhom: null,
@@ -87,8 +102,8 @@ export default {
       ctxDescription: null,
       canvasResult: null,
       ctxResult: null,
-      countBG: 3,
-      currentBG: this.rand(3) + 1,
+      countBG: 8,  // 8 фоновоых картинок
+      currentBG: this.rand(8), // 8 фоновоых картинок
       fromwhom: [
         {name: 'От защитника'},
         {name: 'От любимого'},
@@ -112,12 +127,12 @@ export default {
   },
   methods: {
     nextBg() {
-      this.drawBg();
       this.shiftCurrentBG('next');
+      this.drawBg();
     },
     previousBg() {
-      this.drawBg();
       this.shiftCurrentBG('prev');
+      this.drawBg();
     },
     randomImage() {
       this.shiftCurrentBG('rand');
@@ -128,41 +143,43 @@ export default {
     drawBg() {
       let ctxBG = this.ctxBG;
       let bgImg = document.getElementById('bg-' + this.currentBG);
-      ctxBG.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
+      this.clearCtx(ctxBG);
+      // ctxBG.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
       ctxBG.drawImage(bgImg, 0, 0, this.canvasBG.width, this.canvasBG.height);
     },
     drawText(text, who = 'for') {
-      console.log(who)
       let ctxText;
       if (who == 'for') {
         ctxText = this.ctxFromWhom;
       } else {
         ctxText = this.ctxForWhom;
       }
-      ctxText.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
+      this.clearCtx(ctxText);
+      // ctxText.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
       ctxText.font = "40pt Calibri";
       ctxText.fillText(text, 40, who == 'for' ? 40 : 90);
     },
-    drawDescription() {
-      let ctxText;
-      ctxText = this.ctxDescription;
-      ctxText.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
-      ctxText.font = "40pt Calibri";
-      ctxText.fillText(this.descriptionModel, 40, 140);
+    drawDescription(text = '') {
+      let ctx;
+      ctx = this.ctxDescription;
+      this.clearCtx(ctx);
+      // ctx.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
+      ctx.font = "40pt Calibri";
+      ctx.fillText(text, 40, 140);
     },
     shiftCurrentBG(way = 'next') {
       let result = this.currentBG;
-      if (!way && way == 'next') {
-        if (result == this.countBG) {
-          result = 1;
+      if (!way || way == 'next') {
+        if (result >= (this.countBG - 1)) {
+          result = 0;
         } else {
           result++;
         }
       } else if (way == 'rand') {
-        result = this.rand(this.countBG) + 1;
+        result = this.rand(this.countBG - 1);
       } else {
-        if (result == 1) {
-          result = this.countBG;
+        if (result <= 0) {
+          result = this.countBG - 1;
         } else {
           result--;
         }
@@ -171,7 +188,8 @@ export default {
     },
     mergeLayers() {
       let ctx = this.ctxResult;
-      ctx.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
+      this.clearCtx(ctx);
+      // ctx.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
       ctx.drawImage(this.canvasBG, 0, 0, this.canvasBG.width, this.canvasBG.height);
       ctx.drawImage(this.canvasForWhom, 0, 0, this.canvasBG.width, this.canvasBG.height);
       ctx.drawImage(this.canvasFromWhom, 0, 0, this.canvasBG.width, this.canvasBG.height);
@@ -187,6 +205,12 @@ export default {
       link.download = "Открытка.png";
       link.click();
 
+    },
+    clearCtx(ctx) {
+      ctx.clearRect(0, 0, this.canvasHeight, this.canvasWidth);
+    },
+    clearDescription() {
+      this.clearCtx(this.ctxDescription);
     }
   },
   mounted() {
@@ -200,7 +224,7 @@ export default {
       this.ctxDescription = this.canvasDescription.getContext("2d");
       this.canvasResult = document.getElementById('img-result');
       this.ctxResult = this.canvasResult.getContext("2d");
-      this.nextBg();
+      // this.nextBg();
   }
 }
 </script>
@@ -228,28 +252,21 @@ export default {
   margin-top: 2.8125vw;
   margin-left: 2.448vw;
 }
-.zi-100 {
-  z-index: 100;
-  position: relative;
-}
-.zi-200 {
-  z-index: 200;
-  position: relative;
-}
 .canvas-layer {
   position: absolute;
-  height: 26.5625vw;
-  width: 26.5625vw;
 }
 .canvas-wrapper {
-  height: 26.5625vw;
-  width: 26.5625vw;
+  height: 24.5625vw;
+  width: 24.5625vw;
   background: no-repeat url("/generator_bg.png");
-  background-size: 91%;
+  background-size: 100%;
   margin-left: 8.229vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   canvas {
-    height: 17.5625vw;
-    width: 17.5625vw;
+    height: 20.5625vw;
+    width: 20.5625vw;
   }
 }
 .generator-content {
