@@ -12,8 +12,8 @@
           </canvas>
           <canvas class="canvas-layer" style="z-index: 2" id="img-description" height="600" width="600"></canvas>
           <canvas class="canvas-layer" style="z-index: 3" id="img-fromwhom" height="600" width="600"></canvas>
-          <canvas class="canvas-layer" style="z-index: 3" id="img-forwhom" height="600" width="600"></canvas>
-
+          <canvas class="canvas-layer" style="z-index: 4" id="img-forwhom" height="600" width="600"></canvas>
+          <canvas class="canvas-layer" style="z-index: 5" id="img-sticker" height="600" width="600"></canvas>
         </div>
         <div class="control-panel">
           <button-circle icon="prev" @click="previousBg"></button-circle>
@@ -36,8 +36,8 @@
         <div class="description">
           <dropdown-stickers
               text="Выбрать наклейку"
-              v-on:clearDescription="clearDescription"
-              v-on:drawDescription="drawDescription"
+              v-on:clearSticker="clearSticker"
+              v-on:drawSticker="drawSticker"
           ></dropdown-stickers>
         </div>
         <div>
@@ -61,11 +61,6 @@
                 :closeOnOutsideClick="false">
             </custom-dropdown>
           </div>
-        </div>
-        <div>
-          <custom-button text="Создать открытку" @click="mergeLayers" classes="create"></custom-button>
-          <a id="downloadResult" @click="downloadResult" target="_blank" class="download">Сохранить</a>
-          <canvas id="img-result" style="" height="600" width="600"></canvas>
         </div>
       </div>
     </div>
@@ -102,6 +97,8 @@ export default {
       ctxDescription: null,
       canvasResult: null,
       ctxResult: null,
+      canvasSticker: null,
+      ctxSticker: null,
       countBG: 8,  // 8 фоновоых картинок
       currentBG: this.rand(8), // 8 фоновоых картинок
       fromwhom: [
@@ -155,7 +152,6 @@ export default {
         ctxText = this.ctxForWhom;
       }
       this.clearCtx(ctxText);
-      // ctxText.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
       ctxText.font = "40pt Calibri";
       ctxText.fillText(text, 40, who == 'for' ? 40 : 90);
     },
@@ -163,9 +159,14 @@ export default {
       let ctx;
       ctx = this.ctxDescription;
       this.clearCtx(ctx);
-      // ctx.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
       ctx.font = "40pt Calibri";
       ctx.fillText(text, 40, 140);
+    },
+    drawSticker(id) {
+      let ctx = this.ctxSticker;
+      this.clearCtx(ctx);
+      let sticker = document.getElementById(id);
+      ctx.drawImage(sticker, 0, 0, this.canvasWidth, this.canvasHeight);
     },
     shiftCurrentBG(way = 'next') {
       let result = this.currentBG;
@@ -189,11 +190,11 @@ export default {
     mergeLayers() {
       let ctx = this.ctxResult;
       this.clearCtx(ctx);
-      // ctx.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
-      ctx.drawImage(this.canvasBG, 0, 0, this.canvasBG.width, this.canvasBG.height);
-      ctx.drawImage(this.canvasForWhom, 0, 0, this.canvasBG.width, this.canvasBG.height);
-      ctx.drawImage(this.canvasFromWhom, 0, 0, this.canvasBG.width, this.canvasBG.height);
-      ctx.drawImage(this.canvasDescription, 0, 0, this.canvasBG.width, this.canvasBG.height);
+      ctx.drawImage(this.canvasBG, 0, 0, this.canvasWidth, this.canvasHeight);
+      ctx.drawImage(this.canvasSticker, 0, 0, this.canvasWidth, this.canvasHeight);
+      ctx.drawImage(this.canvasForWhom, 0, 0, this.canvasWidth, this.canvasHeight);
+      ctx.drawImage(this.canvasFromWhom, 0, 0, this.canvasWidth, this.canvasHeight);
+      ctx.drawImage(this.canvasDescription, 0, 0, this.canvasWidth, this.canvasHeight);
     },
     rand(max) { // генерирует целые числа
       return Math.floor(Math.floor(Math.random() * max))
@@ -211,7 +212,10 @@ export default {
     },
     clearDescription() {
       this.clearCtx(this.ctxDescription);
-    }
+    },
+    clearSticker() {
+      this.clearCtx(this.ctxSticker);
+    },
   },
   mounted() {
       this.canvasBG = document.getElementById('img-background');
@@ -224,12 +228,17 @@ export default {
       this.ctxDescription = this.canvasDescription.getContext("2d");
       this.canvasResult = document.getElementById('img-result');
       this.ctxResult = this.canvasResult.getContext("2d");
-      // this.nextBg();
+      this.canvasSticker = document.getElementById('img-sticker');
+      this.ctxSticker = this.canvasSticker.getContext("2d");
+
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.content {
+  background: no-repeat url("/generator_bg-1.png");
+}
 .content-generator {
   padding-top: 14.53125vw;
 }

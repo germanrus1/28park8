@@ -36,6 +36,11 @@ export default {
     border: 0.052vw solid #FFFFFF;
     box-shadow: 0 0.573vw 0.99vw rgba(31, 91, 215, 0.8);
   }
+  &.again {
+    font-weight: 375;
+    font-size: 1.667vw;
+    line-height: 97%;
+  }
   &.blue {
     background: #1F5BD7;
     box-shadow: 0 0.573vw 0.99vw rgba(31, 91, 215, 0.8);
@@ -46,6 +51,7 @@ export default {
     font-weight: 375;
     font-size: 1.667vw;
     line-height: 97%;
+    margin: 0 0 0.99vw 0;
   }
  }
 </style>

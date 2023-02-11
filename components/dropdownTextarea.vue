@@ -1,6 +1,6 @@
 <template>
-  <custom-button :text="text" class="zi-600" @click="toggle"></custom-button>
-  <div class="content-dropdown zi-500" :class="active ? 'isActive':''">
+  <custom-button :text="text" class="zi-800" @click="toggle"></custom-button>
+  <div class="content-dropdown zi-700" :class="active ? 'isActive':''">
     <div class="content-textarea">
       <textarea v-model="textModel" @change="this.$emit('drawDescription', textModel)"></textarea>
       <div class="button-content">

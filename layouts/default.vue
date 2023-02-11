@@ -1,15 +1,33 @@
 <template>
   <div class="content">
     <client-only placeholder="loading">
-      <NuxtPage />
+      <index class="page"></index>
+      <generator class="page isActive"></generator>
+      <finish class="page"></finish>
     </client-only>
   </div>
 </template>
+<script>
+import Index from "../pages/index";
+import Generator from "../pages/generator";
+import Finish from "../pages/finish";
 
-<script lang="ts">
+export default {
+  components: {
+    Index,
+    Generator,
+    Finish,
+  }
+}
 </script>
 
 <style lang="scss">
+  .page {
+    display: none;
+    &.isActive {
+      display: block;
+    }
+  }
   @font-face {
     font-family: 'GT Eesti Pro Text';
     src: local('GT Eesti Pro Text'),
@@ -70,5 +88,36 @@
   .zi-600 {
     z-index: 600;
     position: relative;
+  }
+  .zi-700 {
+    z-index: 700;
+    position: relative;
+  }
+  .zi-800 {
+    z-index: 800;
+    position: relative;
+  }
+  .scroll-content {
+    scrollbar-color: white;
+    scrollbar-width: thin;
+    &.horizontal {
+      &::-webkit-scrollbar-thumb {
+        //border: 0.15625vw solid orange;
+      }
+    }
+    &::-webkit-scrollbar {
+      width: 0.152vw;
+      height: 0.5vw;
+    }
+    &::-webkit-scrollbar-track {
+      background: none;
+    }
+    &::-webkit-scrollbar-thumb {
+      box-shadow: none;
+      width: 0.78125vw;
+      height: 3.646vw;
+      background: #1F5BD7;
+      border-radius: 2.03125vw;
+    }
   }
 </style>
