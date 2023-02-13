@@ -20,14 +20,14 @@
       <div class="for-whom">Для кого открытка?</div>
       <div class="radiobutton-content">
         <div class="radiobutton-button">
-          <label class="radiobutton" @click="radiobuttonModel = 'male'">
+          <label class="radiobutton" @click="radiobuttonModel = 'fromwoman'">
             <input type="radio" name="forwhom">
             <span class="checkmark left"></span>
           </label>
           <span class="radiobutton-label right">ДЛЯ НЕГО</span>
         </div>
         <div class="radiobutton-button">
-          <label class="radiobutton" @click="radiobuttonModel = 'female'">
+          <label class="radiobutton" @click="radiobuttonModel = 'fromman'">
             <input type="radio" name="forwhom">
             <span class="checkmark right"></span>
           </label>
@@ -36,7 +36,7 @@
 
       </div>
       <div class="button-content">
-        <NuxtLink :to="radiobuttonModel ? '/generator' : '/'"><button class="button generate" @click="nextPage">Создать<br>открытку</button></NuxtLink>
+        <button class="button generate" @click="nextPage">Создать<br>открытку</button>
       </div>
     </div>
   </div>
@@ -60,6 +60,9 @@
       nextPage() {
         if (!this.radiobuttonModel) {
           this.isActiveModal = true;
+        } else {
+          this.$emit('updateSelected', this.radiobuttonModel)
+          this.$emit('updatePage', 'generator')
         }
       },
       toggleError() {

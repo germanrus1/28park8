@@ -81,7 +81,6 @@ export default {
 
     li {
       width: 19.583vw;
-      height: 1.09375vw;
       background: #FFFFFF;
       border-radius: 1.5625vw;
       flex: none;
@@ -98,6 +97,7 @@ export default {
         text-align: center;
         text-transform: uppercase;
         padding: 0;
+        white-space: break-spaces;
       }
     }
   }

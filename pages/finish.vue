@@ -1,32 +1,31 @@
 <template>
   <div class="content-generator" >
-    <div class="generator-content">
-      <!--      Левая часть-->
-      <div class="generator-content__left">
-        <div class="text__select-bg">
-          Выберите фон
+    <div class="content-generator__wrapper">
+      <div class="generator-content">
+        <!--      Левая часть-->
+        <div class="generator-content__left">
+          <div class="canvas-wrapper">
+            <canvas id="img-result" style="" height="600" width="600">Ваш браузер не поддерживает это приложение.
+              Обновитесь или скачайте другой браузер</canvas>
+          </div>
         </div>
-        <div class="canvas-wrapper">
-          <canvas id="img-result" style="" height="600" width="600">Ваш браузер не поддерживает это приложение.
-            Обновитесь или скачайте другой браузер</canvas>
-        </div>
-      </div>
-      <!--      Правая часть-->
-      <div class="generator-content__right">
-        <div class="description-img">
-        </div>
-        <div class="description-text_top">
-          У вас получилась отличная открытка!
-        </div>
-        <div class="description-text_bottom">
-          Не забудьте поделиться ей <br>с коллегами на «Кругосветке».
-          <br><br>
-          Сохраните свою открытку и поздравьте друзей и близких.
-        </div>
-        <div>
-          <custom-button text="Сохранить" @click="downloadResult" classes="create"></custom-button>
-          <custom-button text="Попробовать еще раз" @click="console.log('/')" classes="again"></custom-button>
-          <a id="downloadResult" @click="downloadResult" target="_blank" class="download">Сохранить</a>
+        <!--      Правая часть-->
+        <div class="generator-content__right">
+          <div class="description-img">
+          </div>
+          <div class="description-text_top">
+            У вас получилась отличная открытка!
+          </div>
+          <div class="description-text_bottom">
+            Не забудьте поделиться ей <br>с коллегами на «Кругосветке».
+            <br><br>
+            Сохраните свою открытку и поздравьте друзей и близких.
+          </div>
+          <div>
+            <custom-button text="Сохранить" @click="downloadResult" classes="create"></custom-button>
+            <custom-button text="Попробовать еще раз" @click="this.$emit('updatePage', 'index')" classes="again"></custom-button>
+            <a id="downloadResult" @click="downloadResult" target="_blank" class="download" style="display: none">Сохранить</a>
+          </div>
         </div>
       </div>
     </div>
@@ -34,15 +33,34 @@
 </template>
 
 <script>
+  export default {
+    data() {
+      return {
+        canvasResult: null,
+      }
+    },
+    methods: {
+      downloadResult() {
+        let dataURL = this.canvasResult.toDataURL("image/png");
+        let link = document.getElementById('downloadResult');
+        link.href = dataURL;
+        link.download = "Открытка.png";
+        link.click();
+      },
+    },
+    mounted() {
+      this.canvasResult = document.getElementById('img-result');
+    }
+  }
 </script>
 
 <style lang="scss" scoped>
-
-.content {
-  background: no-repeat url("/generator_bg-1.png");
-}
 .content-generator {
-  padding-top: 14.53125vw;
+  background: no-repeat url("/background_finish.png") top center;
+  padding-bottom: 5vw;
+  &__wrapper {
+    padding-top: 14.53125vw;
+  }
 }
 .control-panel {
   display: flex;
@@ -51,50 +69,40 @@
   margin-left: 8.073vw;
   margin-top: -1.2vw;
 }
-.text__select-bg {
-  width: 15.417vw;
-  height: 3.49vw;
-  font-family: 'GT Eesti Pro Text';
-  font-style: normal;
-  font-weight: 350;
-  font-size: 3.333vw;
-  line-height: 97%;
-  color: #1F5BD7;
-  margin-top: 2.8125vw;
-  margin-left: 2.448vw;
-}
 .canvas-layer {
   position: absolute;
 }
 .canvas-wrapper {
-  height: 24.5625vw;
-  width: 24.5625vw;
+  height: auto;
+  width: 31.5625vw;
   background: no-repeat url("/generator_bg.png");
   background-size: 100%;
-  margin-left: 8.229vw;
+  margin-left: 1.40625vw;
   display: flex;
   justify-content: center;
   align-items: center;
 canvas {
-  height: 20.5625vw;
-  width: 20.5625vw;
+  height: 33.125vw;
+  width: 33.125vw;
 }
 }
 .generator-content {
   display: flex;
   justify-content: space-between;
   width: 65.15625vw;
-  height: 36.71875vw;
+  height: auto;
   margin-left: 17.448vw;
   background: rgba(255, 255, 255, 0.25);
   box-shadow: inset 0 0.208vw 5.9375vw #FFFFFF;
   backdrop-filter: blur(0.9375vw);
   border-radius: 2.604vw;
+  padding-bottom: 1.302vw;
   &__left {
+    margin-top: 1.302vw;
      width: 35.99vw;
    }
   &__right {
-    margin-top: 5.46875vw;
+    margin-top: 1.302vw;
     width: 22.552vw;
     padding-right: 1.5625vw;
     padding-left: 1.5625vw;

@@ -1,6 +1,7 @@
 <template>
   <div class="content-generator" >
-    <div class="generator-content">
+    <div class="content-generator__wrapper">
+      <div class="generator-content">
       <!--      Левая часть-->
       <div class="generator-content__left">
         <div class="text__select-bg">
@@ -10,10 +11,15 @@
           <canvas class="canvas-layer" style="z-index: 1" id="img-background" height="600" width="600">Ваш браузер не поддерживает это приложение.
             Обновитесь или скачайте другой браузер
           </canvas>
-          <canvas class="canvas-layer" style="z-index: 2" id="img-description" height="600" width="600"></canvas>
-          <canvas class="canvas-layer" style="z-index: 3" id="img-fromwhom" height="600" width="600"></canvas>
-          <canvas class="canvas-layer" style="z-index: 4" id="img-forwhom" height="600" width="600"></canvas>
-          <canvas class="canvas-layer" style="z-index: 5" id="img-sticker" height="600" width="600"></canvas>
+          <canvas class="canvas-layer" style="z-index: 2" id="img-sticker" height="600" width="600"></canvas>
+          <canvas class="canvas-layer" style="z-index: 3" id="img-description" height="600" width="600"></canvas>
+          <canvas class="canvas-layer" style="z-index: 4" id="img-fromwhom" height="600" width="600"></canvas>
+          <canvas class="canvas-layer" style="z-index: 5" id="img-forwhom" height="600" width="600"></canvas>
+          <div style="min-height: 3vw; min-width: 3vw"
+               @dblclick="editText()"
+          >
+
+          </div>
         </div>
         <div class="control-panel">
           <button-circle icon="prev" @click="previousBg"></button-circle>
@@ -27,11 +33,13 @@
       <!--      Правая часть-->
       <div class="generator-content__right">
         <div class="description">
-          <dropdown-textarea
+          <dropdown-description
               text="Добавить текст"
               v-on:clearDescription="clearDescription"
-              v-on:drawDescription="drawDescription"
-          ></dropdown-textarea>
+              v-on:selectDescription="selectDescription"
+              :options="descriptions[fromwhomSelected]"
+              :closeOnOutsideClick="true"
+          ></dropdown-description>
         </div>
         <div class="description">
           <dropdown-stickers
@@ -44,25 +52,27 @@
           <div class="zi-200">
             <custom-dropdown
                 v-on:drawText="drawText"
-                :options="forwhom"
+                :options="forwhom[fromwhomSelected]"
                 :selected="'Кому'"
                 :placeholder="'Кому'"
                 :who="'for'"
-                :closeOnOutsideClick="false">
+                :closeOnOutsideClick="true">
             </custom-dropdown>
           </div>
           <div class=" zi-100">
             <custom-dropdown
                 v-on:drawText="drawText"
-                :options="fromwhom"
+                :options="fromwhom[fromwhomSelected]"
                 :selected="'От кого'"
                 :placeholder="'От кого'"
                 :who="'from'"
-                :closeOnOutsideClick="false">
+                :closeOnOutsideClick="true">
             </custom-dropdown>
           </div>
+          <custom-button text="Создать открытку" classes="create" @click="nextPage()"></custom-button>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </template>
@@ -73,15 +83,20 @@ import CustomDropdown from "../components/customDropdown";
 import ButtonCircle from "../components/buttonCircle"
 import DropdownTextarea from "../components/dropdownTextarea"
 import DropdownStickers from "../components/dropdownStickers"
+import DropdownDescription from "../components/dropdownDescription";
 
 export default {
   name: "generator",
   components: {
+    DropdownDescription,
     CustomDropdown,
     CustomButton,
     ButtonCircle,
     DropdownTextarea,
     DropdownStickers,
+  },
+  props: {
+    fromwhomSelected: 'fromman',
   },
   data() {
     return {
@@ -101,19 +116,85 @@ export default {
       ctxSticker: null,
       countBG: 8,  // 8 фоновоых картинок
       currentBG: this.rand(8), // 8 фоновоых картинок
-      fromwhom: [
-        {name: 'От защитника'},
-        {name: 'От любимого'},
-        {name: 'От любимой мужчины'},
-        {name: 'От джентельмена'},
-      ],
-      forwhom: [
-          {name: 'Для любимой'},
-          {name: 'Для зайчика'},
-          {name: 'Прекрасному человеку'},
-          {name: 'Наипрекраснейшему человеку'},
-      ],
+      fromwhom: {
+        'fromman': [
+          {name: 'От профессионального кофе-брейкера'},
+          {name: 'От любителя праздничных угощений'},
+          {name: 'От надёжного, как скала'},
+          {name: 'От точного, как прогноз погоды'},
+          {name: 'От напарника в любом деле'},
+          {name: 'От соседа по карусели'},
+          {name: 'От свидетеля сладкой ваты'},
+          {name: 'От путешественника в любую сторону'},
+          {name: 'От весёлого и находчивого'},
+        ],
+        'fromwoman': [
+          {name: 'От непредсказуемой, как американские горки'},
+          {name: 'От королевы групповых чатов'},
+          {name: 'От обладательницы мешка мемов и шуток'},
+          {name: 'От надёжной напарницы в любом деле'},
+          {name: 'От фанатки хорошего настроения'},
+          {name: 'От коллеги по офисным шуткам'},
+          {name: 'От большой любительницы открыток'},
+        ],
+      },
+      forwhom: {
+        'fromwoman': [
+          {name: 'Чемпиону всех барных игр мира'},
+          {name: 'Укротителю дедлайнов'},
+          {name: 'Безудержному оптимисту'},
+          {name: 'Главному специалисту по внезапному веселью'},
+          {name: 'Знатоку смешных историй'},
+          {name: 'Генератору ярких идей'},
+          {name: 'Покорителю финансовых вершин'},
+          {name: 'Специалисту по праздничной атмосфере'},
+          {name: 'Душе компании'},
+          {name: 'Лучшему в мире коллеге'},
+        ],
+        'fromman': [
+          {name: 'Главной по праздничной атмосфере'},
+          {name: 'Фее цветов и конфет'},
+          {name: 'Вдохновительнице на подвиги'},
+          {name: 'Королеве сладостей'},
+          {name: 'Генератору хорошего настроения'},
+          {name: 'Главной по улыбкам'},
+          {name: 'Обладательнице черного пояса по креативности'},
+          {name: 'Укротительнице понедельников'},
+          {name: 'Лучшей в мире коллеге'},
+        ],
+      },
       descriptionModel: '',
+      descriptions: {
+        'fromman': [
+          {name: 'Ты лучше, чем праздничный фейерверк. Ведь ты не только светишь, но и согреваешь!'},
+          {name: 'Пусть мечты будут слаще, чем сладкая вата!'},
+          {name: 'Ты настоящий фейерверк!'},
+          {name: 'Ты раскачаешь любой праздник лучше, чем качели!'},
+          {name: 'Пусть каждый день будет словно в парке развлечений!'},
+          {name: 'Вытяни счастливый билетик, чтобы сбывались мечты!'},
+          {name: 'Пусть проблемы улетят на воздушных шариках!'},
+          {name: 'С тобой комната страха превращается в комнату смеха!'},
+          {name: 'Любой вопрос решается, если за дело берёшься ты лично!'},
+          {name: 'Ярких побед в любом деле!'},
+          {name: 'Головокружительного успеха во всём!'},
+          {name: 'Ныряй в приключения, будь на позитиве!'},
+          {name: 'Твоя энергия заряжает стадионы!'},
+        ],
+        'fromwoman': [
+          {name: 'С тобой интереснее, чем на самом большом колесе обозрения!'},
+          {name: 'Азарт – это твоё второе имя. Пусть тебе везет каждый день!'},
+          {name: 'Когда ты рядом, сложное становится простым!'},
+          {name: 'Твои идеи просто улет!'},
+          {name: 'С тобой не нужен билет в парк развлечений!'},
+          {name: 'Ты настоящий вулкан идей!'},
+          {name: 'Пусть мечты вдохновляют тебя и людей вокруг!'},
+          {name: 'Головокружительных успехов во всем!'},
+          {name: 'Пусть удача тебе улыбнётся!'},
+          {name: 'Мечтай по-крупному, выигрывай во всем!'},
+          {name: 'Главное, верить в себя!'},
+          {name: 'С тобой – хоть в комнату страха, хоть в комнату смеха!'},
+        ],
+      },
       selectedForwhom: {
         name: 'Для кого',
       },
@@ -123,6 +204,13 @@ export default {
     }
   },
   methods: {
+    editText() {
+
+    },
+    selectDescription(text) {
+      // this.descriptionModel = text;
+      this.drawDescription(text);
+    },
     nextBg() {
       this.shiftCurrentBG('next');
       this.drawBg();
@@ -134,32 +222,35 @@ export default {
     randomImage() {
       this.shiftCurrentBG('rand');
       this.drawBg();
-      this.drawText(this.fromwhom[this.rand(this.fromwhom.length)].name, 'from');
-      this.drawText(this.forwhom[this.rand(this.forwhom.length)].name, 'for');
+      this.drawSticker('sticker-' + this.rand(13));
+      this.drawDescription(this.descriptions[this.fromwhomSelected][this.rand(this.descriptions[this.fromwhomSelected].length)].name);
+      this.drawText(this.fromwhom[this.fromwhomSelected][this.rand(this.fromwhom[this.fromwhomSelected].length)].name, 'from');
+      this.drawText(this.forwhom[this.fromwhomSelected][this.rand(this.forwhom[this.fromwhomSelected].length)].name, 'for');
     },
     drawBg() {
       let ctxBG = this.ctxBG;
       let bgImg = document.getElementById('bg-' + this.currentBG);
       this.clearCtx(ctxBG);
-      // ctxBG.clearRect(0, 0, this.canvasBG.width, this.canvasBG.height);
       ctxBG.drawImage(bgImg, 0, 0, this.canvasBG.width, this.canvasBG.height);
     },
     drawText(text, who = 'for') {
-      let ctxText;
+      let ctx;
       if (who == 'for') {
-        ctxText = this.ctxFromWhom;
+        ctx = this.ctxFromWhom;
       } else {
-        ctxText = this.ctxForWhom;
+        ctx = this.ctxForWhom;
       }
-      this.clearCtx(ctxText);
-      ctxText.font = "40pt Calibri";
-      ctxText.fillText(text, 40, who == 'for' ? 40 : 90);
+      this.clearCtx(ctx);
+      ctx.font = "400 3.354vw GT Eesti Pro Text";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(text, 40, who == 'for' ? 40 : 90);
     },
     drawDescription(text = '') {
       let ctx;
       ctx = this.ctxDescription;
       this.clearCtx(ctx);
-      ctx.font = "40pt Calibri";
+      ctx.font = "400 3.354vw GT Eesti Pro Text";
+      ctx.fillStyle = "#ffffff";
       ctx.fillText(text, 40, 140);
     },
     drawSticker(id) {
@@ -199,14 +290,6 @@ export default {
     rand(max) { // генерирует целые числа
       return Math.floor(Math.floor(Math.random() * max))
     },
-    downloadResult() {
-      let dataURL = this.canvasResult.toDataURL("image/png");
-      let link = document.getElementById('downloadResult');
-      link.href = dataURL;
-      link.download = "Открытка.png";
-      link.click();
-
-    },
     clearCtx(ctx) {
       ctx.clearRect(0, 0, this.canvasHeight, this.canvasWidth);
     },
@@ -215,6 +298,10 @@ export default {
     },
     clearSticker() {
       this.clearCtx(this.ctxSticker);
+    },
+    nextPage() {
+      this.mergeLayers();
+      this.$emit('updatePage', 'finish');
     },
   },
   mounted() {
@@ -230,22 +317,22 @@ export default {
       this.ctxResult = this.canvasResult.getContext("2d");
       this.canvasSticker = document.getElementById('img-sticker');
       this.ctxSticker = this.canvasSticker.getContext("2d");
-
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.content {
-  background: no-repeat url("/generator_bg-1.png");
-}
 .content-generator {
-  padding-top: 14.53125vw;
+  background: no-repeat url("/background_generator.png") top center;
+  padding-bottom: 5vw;
+  &__wrapper {
+    padding-top: 14.53125vw;
+  }
 }
 .control-panel {
   display: flex;
   justify-content: space-between;
-  width: 27.917vw;
+  width: 24.917vw;
   margin-left: 8.073vw;
   margin-top: -1.2vw;
 }
@@ -273,6 +360,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: -1vw;
   canvas {
     height: 20.5625vw;
     width: 20.5625vw;
@@ -283,12 +371,11 @@ export default {
   justify-content: space-between;
   width: 65.15625vw;
   height: 36.71875vw;
-  margin-left: 17.448vw;
+  margin: auto;
   background: rgba(255, 255, 255, 0.25);
   box-shadow: inset 0 0.208vw 5.9375vw #FFFFFF;
   backdrop-filter: blur(0.9375vw);
   border-radius: 2.604vw;
-
   &__left {
     width: 35.99vw;
   }

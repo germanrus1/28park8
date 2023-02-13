@@ -1,9 +1,20 @@
 <template>
   <div class="content">
     <client-only placeholder="loading">
-      <index class="page"></index>
-      <generator class="page isActive"></generator>
-      <finish class="page"></finish>
+      <index class="page"
+             v-on:updatePage="updatePage"
+             v-on:updateSelected="updateSelected"
+             :class="(!currentPage || currentPage == 'index') ? 'isActive' : ''"
+      ></index>
+      <generator class="page"
+                 v-on:updatePage="updatePage"
+                 :class="(currentPage == 'generator') ? 'isActive' : ''"
+                 :fromwhomSelected="this.fromwhomSelected"
+      ></generator>
+      <finish class="page"
+              v-on:updatePage="updatePage"
+              :class="(currentPage == 'finish') ? 'isActive' : ''"
+      ></finish>
     </client-only>
   </div>
 </template>
@@ -17,6 +28,20 @@ export default {
     Index,
     Generator,
     Finish,
+  },
+  data() {
+    return {
+      currentPage: 'index',
+      fromwhomSelected: 'fromman',
+    }
+  },
+  methods: {
+    updatePage(page) {
+      this.currentPage = page ? page : 'index';
+    },
+    updateSelected(fromwhom) {
+      this.fromwhomSelected = fromwhom ?? 'fromman';
+    }
   }
 }
 </script>
@@ -98,7 +123,6 @@ export default {
     position: relative;
   }
   .scroll-content {
-    scrollbar-color: white;
     scrollbar-width: thin;
     &.horizontal {
       &::-webkit-scrollbar-thumb {
