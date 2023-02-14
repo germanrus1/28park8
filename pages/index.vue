@@ -114,6 +114,11 @@
   }
   .content-index {
     padding-top: 17.76vw;
+    background: no-repeat url(/background_text_v-mire.svg) 17.76vw 4.21875vw,
+                no-repeat url(/background_text_MIR.svg) 78.542vw 5.521vw,
+                no-repeat url(/background_index.png) 0 6.9vw;
+    padding-bottom: 5vw;
+    background-size: 26%, 8%, 100%;
   }
   .button-content {
     width: 15.052vw;
@@ -165,7 +170,7 @@
     display: flex;
     justify-content: space-between;
     width: 26.875vw;
-    height: 11vw;
+    height: 8vw;
     margin-top: 1.823vw;
     padding-left: 5.104vw;
   }

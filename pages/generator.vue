@@ -1,5 +1,6 @@
 <template>
   <div class="content-generator" >
+    <dev-ranger min="0" max="600" v-on:textPosition="textPosition"></dev-ranger>
     <div class="content-generator__wrapper">
       <div class="generator-content">
       <!--      Левая часть-->
@@ -25,6 +26,7 @@
           <button-circle icon="prev" @click="previousBg"></button-circle>
           <button-circle icon="rand" @click="randomImage" style="margin-top: 2.1vw;"></button-circle>
           <button-circle icon="next" @click="nextBg"></button-circle>
+          <span style="font-size: 4vw">{{currentBG}}</span>
         </div>
         <div style="display: none">
           <img v-for="i in this.countBG" :id="'bg-' + (i - 1)" :src="'/backgrounds/background-' + (i - 1) +'.png'" :alt="'/background/background-' + (i - 1) +'.png'">
@@ -84,10 +86,12 @@ import ButtonCircle from "../components/buttonCircle"
 import DropdownTextarea from "../components/dropdownTextarea"
 import DropdownStickers from "../components/dropdownStickers"
 import DropdownDescription from "../components/dropdownDescription";
+import DevRanger from "../components/devRanger";
 
 export default {
   name: "generator",
   components: {
+    DevRanger,
     DropdownDescription,
     CustomDropdown,
     CustomButton,
@@ -114,53 +118,85 @@ export default {
       ctxResult: null,
       canvasSticker: null,
       ctxSticker: null,
+      currentSticker: 0,
+      currentTextFor: '',
+      currentTextFrom: '',
+      coordinates: {
+        'description': {'x': 0, 'y': 0},
+        'fromwhom': {'x': 0, 'y': 0},
+        'forwhom': {'x': 0, 'y': 0},
+        'sticker': {'x': 0, 'y': 0},
+        'fontSize': 26,
+      },
+      positions: {
+        'sticker': {
+          0: {x:90, y:223},
+          1: {x:116, y:119},
+          2: {x:167, y:118},
+          3: {x:142, y:57},
+          4: {x:96, y:55},
+          5: {x:281, y:70},
+          6: {x:126, y:327},
+          7: {x:69, y:325},
+        },
+        'fromwhom': {
+          0: {x:90, y:223},
+          1: {x:116, y:119},
+          2: {x:167, y:118},
+          3: {x:142, y:57},
+          4: {x:96, y:55},
+          5: {x:281, y:70},
+          6: {x:126, y:327},
+          7: {x:69, y:325},
+        },
+      },
       countBG: 8,  // 8 фоновоых картинок
       currentBG: this.rand(8), // 8 фоновоых картинок
       fromwhom: {
         'fromman': [
-          {name: 'От профессионального кофе-брейкера'},
-          {name: 'От любителя праздничных угощений'},
-          {name: 'От надёжного, как скала'},
-          {name: 'От точного, как прогноз погоды'},
-          {name: 'От напарника в любом деле'},
-          {name: 'От соседа по карусели'},
-          {name: 'От свидетеля сладкой ваты'},
-          {name: 'От путешественника в любую сторону'},
-          {name: 'От весёлого и находчивого'},
+          {name: 'От профессионального@кофе-брейкера', id: 0},
+          {name: 'От любителя@праздничных угощений', id: 1},
+          {name: 'От надёжного,@как скала', id: 2},
+          {name: 'От точного, как прогноз@погоды', id: 3},
+          {name: 'От напарника в любом@деле', id: 4},
+          {name: 'От соседа@по карусели', id: 5},
+          {name: 'От свидетеля@сладкой ваты', id: 6},
+          {name: 'От путешественника@в любую сторону', id: 7},
+          {name: 'От весёлого@и находчивого', id: 8},
         ],
         'fromwoman': [
-          {name: 'От непредсказуемой, как американские горки'},
-          {name: 'От королевы групповых чатов'},
-          {name: 'От обладательницы мешка мемов и шуток'},
-          {name: 'От надёжной напарницы в любом деле'},
-          {name: 'От фанатки хорошего настроения'},
-          {name: 'От коллеги по офисным шуткам'},
-          {name: 'От большой любительницы открыток'},
+          {name: 'От непредсказуемой,@как американские горки', id: 0},
+          {name: 'От королевы групповых@чатов', id: 1},
+          {name: 'От обладательницы@мешка мемов и шуток', id: 2},
+          {name: 'От надёжной@напарницы в любом@деле', id: 3},
+          {name: 'От фанатки хорошего@настроения', id: 4},
+          {name: 'От коллеги@по офисным шуткам', id: 5},
+          {name: 'От большой@любительницы@открыток', id: 6},
         ],
       },
       forwhom: {
         'fromwoman': [
-          {name: 'Чемпиону всех барных игр мира'},
-          {name: 'Укротителю дедлайнов'},
-          {name: 'Безудержному оптимисту'},
-          {name: 'Главному специалисту по внезапному веселью'},
-          {name: 'Знатоку смешных историй'},
-          {name: 'Генератору ярких идей'},
-          {name: 'Покорителю финансовых вершин'},
-          {name: 'Специалисту по праздничной атмосфере'},
-          {name: 'Душе компании'},
-          {name: 'Лучшему в мире коллеге'},
+          {name: 'Чемпиону всех барных@игр мира', id: 0},
+          {name: 'Укротителю@дедлайнов', id: 1},
+          {name: 'Безудержному@оптимисту', id: 2},
+          {name: 'Главному специалисту@по внезапному веселью', id: 3},
+          {name: 'Знатоку смешных@историй', id: 4},
+          {name: 'Генератору@ярких идей', id: 5},
+          {name: 'Покорителю@финансовых вершин', id: 6},
+          {name: 'Специалисту@по праздничной@атмосфере', id: 7},
+          {name: 'Душе компании', id: 8},
+          {name: 'Лучшему в мире@коллеге', id: 9},
         ],
         'fromman': [
-          {name: 'Главной по праздничной атмосфере'},
-          {name: 'Фее цветов и конфет'},
-          {name: 'Вдохновительнице на подвиги'},
-          {name: 'Королеве сладостей'},
-          {name: 'Генератору хорошего настроения'},
-          {name: 'Главной по улыбкам'},
-          {name: 'Обладательнице черного пояса по креативности'},
-          {name: 'Укротительнице понедельников'},
-          {name: 'Лучшей в мире коллеге'},
+          {name: 'Главной по@праздничной@атмосфере', id: 0},
+          {name: 'Фее цветов и конфет', id: 1},
+          {name: 'Вдохновительнице@на подвиги', id: 2},
+          {name: 'Королеве сладостей', id: 3},
+          {name: 'Генератору хорошего@настроения', id: 4},
+          {name: 'Главной по улыбкам', id: 5},
+          {name: 'Обладательнице@черного пояса по@креативности', id: 6},
+          {name: 'Укротительнице@понедельников', id: 7},
+          {name: 'Лучшей в мире коллеге', id: 8},
         ],
       },
       descriptionModel: '',
@@ -204,6 +240,24 @@ export default {
     }
   },
   methods: {
+    textPosition(type, x, y, fontSize) {
+      this.coordinates[type].x = x;
+      this.coordinates[type].y = y;
+      this.coordinates.fontSize = fontSize;
+      // console.log(this.coordinates)
+      // if (type == 'description') {
+      //   this.drawDescription();
+      // }
+      // if (type == 'sticker') {
+      //   this.drawSticker();
+      // }
+      // if (type == 'fromwhom') {
+      //   this.drawText('asdfasdasdf', 'from');
+      // }
+      // if (type == 'forwhom') {
+      //   this.drawText('asdfasdasdf', 'for');
+      // }
+    },
     editText() {
 
     },
@@ -234,30 +288,61 @@ export default {
       ctxBG.drawImage(bgImg, 0, 0, this.canvasBG.width, this.canvasBG.height);
     },
     drawText(text, who = 'for') {
-      let ctx;
+      let ctx, x, y, fontSize, texts;
+
       if (who == 'for') {
         ctx = this.ctxFromWhom;
       } else {
         ctx = this.ctxForWhom;
       }
+
+      x = this.coordinates[who == 'for' ? 'forwhom' : 'fromwhom'].x - 40;
+      y = this.coordinates[who == 'for' ? 'forwhom' : 'fromwhom'].y;
+      fontSize = this.coordinates.fontSize;
+      // text = 'От большой@любительницы@открыток';
+      texts = text.split('@');
       this.clearCtx(ctx);
-      ctx.font = "400 3.354vw GT Eesti Pro Text";
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText(text, 40, who == 'for' ? 40 : 90);
+      console.log(this.getMaxLengText(texts))
+      // заливка фона градиентом
+      const gradient = ctx.createLinearGradient(20, 0, 358, 0);
+      gradient.addColorStop(1, "rgba(109, 192, 255, 0.28)");
+      gradient.addColorStop(0.29, "#1F5BD7");
+      ctx.beginPath();
+      ctx.roundRect(x - fontSize - 20, y - fontSize - 20, this.getMaxLengText(texts) * 20, fontSize*3+texts.length*fontSize / 2, 50);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // заливка текста/текстов
+      texts.forEach(function(text, index) {
+        ctx.font = "400 " + fontSize + "px GT Eesti Pro Text";
+        ctx.fillStyle = "#000000";
+
+        // выравнивание нижних текстов относительно первого
+        x += index != 0 ? fontSize * (texts[0].length - text.length)/4 : 0;
+        ctx.fillText(text, x, y + (fontSize) * index);
+      })
     },
     drawDescription(text = '') {
       let ctx;
       ctx = this.ctxDescription;
       this.clearCtx(ctx);
       ctx.font = "400 3.354vw GT Eesti Pro Text";
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText(text, 40, 140);
+      ctx.fillStyle = "#000000";
+      ctx.fillText(text, 40, 120);
+    },
+    getMaxLengText(texts) {
+      let max = 0;
+      texts.forEach(function (text) {
+        max = max < text.length ? text.length : max;
+      });
+
+      return max;
     },
     drawSticker(id) {
       let ctx = this.ctxSticker;
       this.clearCtx(ctx);
       let sticker = document.getElementById(id);
-      ctx.drawImage(sticker, 0, 0, this.canvasWidth, this.canvasHeight);
+      ctx.drawImage(sticker, this.positions.sticker[this.currentBG].x, this.positions.sticker[this.currentBG].y, 290, 290);
     },
     shiftCurrentBG(way = 'next') {
       let result = this.currentBG;
@@ -323,7 +408,10 @@ export default {
 
 <style lang="scss" scoped>
 .content-generator {
-  background: no-repeat url("/background_generator.png") top center;
+  background: no-repeat url(/background_text_v-mire.svg) 18.542vw 5.208vw,
+  no-repeat url(/background_text_MIR.svg) 82.34375vw 5.3125vw,
+  no-repeat url(/background_generator.png) 0 0;
+  background-size: 18%, 8%, 100%;
   padding-bottom: 5vw;
   &__wrapper {
     padding-top: 14.53125vw;

@@ -87,7 +87,7 @@ export default {
   .content {
     background: radial-gradient(84.49% 187.9% at 3.52% 95.88%, #FFBACB 0%, #9DD6F4 64.24%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
     box-shadow: 0 0.52vw 0.52vw rgba(0, 0, 0, 0.25);
-    width: 100vw;
+    max-width: 100vw;
     height: 100%;
 
     @media screen and (min-width: 768px) {

@@ -28,16 +28,16 @@ export default {
     height: 7.2vw;
     width: 7.2vw;
     &.next {
-      background: no-repeat url(/_nuxt/button_arrow.svg) 74% 74%;
+      background: no-repeat url(/button_arrow.svg) 74% 74%;
       background-size: 53%;
       transform: rotate(180deg);
     }
     &.prev {
-      background: no-repeat url(/_nuxt/button_arrow.svg) 14% 28%;
+      background: no-repeat url(/button_arrow.svg) 14% 28%;
       background-size: 53%;
     }
     &.rand {
-      background: no-repeat url(/_nuxt/button_random.svg) 28% 23%;
+      background: no-repeat url(/button_random.svg) 28% 23%;
       background-size: 33%;
     }
   }

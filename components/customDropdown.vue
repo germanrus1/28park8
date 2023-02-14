@@ -1,6 +1,6 @@
 <template>
   <dropdown class="my-dropdown-toggle"
-            :options="options"
+            :options="prepareText(options)"
             :selected="selected"
             v-on:updateOption="onSelected"
             :placeholder="placeholder"
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import dropdown from 'vue-dropdowns';
+import dropdown from '../components/dropdown';
 
 export default {
   name: "customDropdown",
@@ -31,8 +31,16 @@ export default {
   },
   methods: {
     onSelected(payload) {
-      this.$emit("drawText", payload.name, this.who);
+      this.$emit("drawText", this.options[payload.id].name, this.who);
     },
+    prepareText(array) {
+      let res = [];
+      array.forEach(function (element){
+        res.push({name: element.name.split('@').join(' '), id: element.id});
+      });
+
+      return res;
+    }
   }
 }
 </script>
@@ -95,7 +103,6 @@ export default {
         font-size: 0.947vw;
         line-height: 1.09375vw;
         text-align: center;
-        text-transform: uppercase;
         padding: 0;
         white-space: break-spaces;
       }
