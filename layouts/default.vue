@@ -9,6 +9,7 @@
       <generator class="page"
                  v-on:updatePage="updatePage"
                  :class="(currentPage == 'generator') ? 'isActive' : ''"
+                 ref="generator"
                  :fromwhomSelected="this.fromwhomSelected"
       ></generator>
       <finish class="page"
@@ -38,6 +39,9 @@ export default {
   methods: {
     updatePage(page) {
       this.currentPage = page ? page : 'index';
+      if (this.currentPage == 'generator') {
+        this.$refs.generator.clearLayers();
+      }
     },
     updateSelected(fromwhom) {
       this.fromwhomSelected = fromwhom ?? 'fromman';

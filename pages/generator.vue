@@ -1,6 +1,6 @@
 <template>
   <div class="content-generator" >
-    <dev-ranger min="0" max="600" v-on:textPosition="textPosition"></dev-ranger>
+<!--    <dev-ranger min="0" max="600" v-on:textPosition="textPosition"></dev-ranger>-->
     <div class="content-generator__wrapper">
       <div class="generator-content">
       <!--      Левая часть-->
@@ -12,6 +12,8 @@
           <canvas class="canvas-layer" style="z-index: 1" id="img-background" height="600" width="600">Ваш браузер не поддерживает это приложение.
             Обновитесь или скачайте другой браузер
           </canvas>
+<!--          <div id="html2canvasDescription" class="html2canvasDescription"></div>-->
+<!--          <img id="testIMG" src="">-->
           <canvas class="canvas-layer" style="z-index: 2" id="img-sticker" height="600" width="600"></canvas>
           <canvas class="canvas-layer" style="z-index: 3" id="img-description" height="600" width="600"></canvas>
           <canvas class="canvas-layer" style="z-index: 4" id="img-fromwhom" height="600" width="600"></canvas>
@@ -26,7 +28,7 @@
           <button-circle icon="prev" @click="previousBg"></button-circle>
           <button-circle icon="rand" @click="randomImage" style="margin-top: 2.1vw;"></button-circle>
           <button-circle icon="next" @click="nextBg"></button-circle>
-          <span style="font-size: 4vw">{{currentBG}}</span>
+<!--          <span style="font-size: 4vw">{{currentBG}}</span>-->
         </div>
         <div style="display: none">
           <img v-for="i in this.countBG" :id="'bg-' + (i - 1)" :src="'/backgrounds/background-' + (i - 1) +'.png'" :alt="'/background/background-' + (i - 1) +'.png'">
@@ -87,6 +89,7 @@ import DropdownTextarea from "../components/dropdownTextarea"
 import DropdownStickers from "../components/dropdownStickers"
 import DropdownDescription from "../components/dropdownDescription";
 import DevRanger from "../components/devRanger";
+// import Html2Canvas from 'html2canvas';
 
 export default {
   name: "generator",
@@ -139,16 +142,38 @@ export default {
           6: {x:126, y:327},
           7: {x:69, y:325},
         },
-        'fromwhom': {
-          0: {x:90, y:223},
-          1: {x:116, y:119},
-          2: {x:167, y:118},
-          3: {x:142, y:57},
-          4: {x:96, y:55},
-          5: {x:281, y:70},
-          6: {x:126, y:327},
-          7: {x:69, y:325},
+        'forwhom': {
+          0: {x:208, y:504},
+          1: {x:208, y:504},
+          2: {x:208, y:504},
+          3: {x:208, y:504},
+          4: {x:208, y:504},
+          5: {x:208, y:504},
+          6: {x:126, y:504},
+          7: {x:126, y:504},
         },
+        'fromwhom': {
+          0: {x:208, y:370},
+          1: {x:208, y:370},
+          2: {x:208, y:370},
+          3: {x:208, y:370},
+          4: {x:208, y:370},
+          5: {x:208, y:370},
+          6: {x:126, y:370},
+          7: {x:126, y:370},
+        },
+        'description': {
+          0: {x:208, y:370},
+          1: {x:208, y:370},
+          2: {x:208, y:370},
+          3: {x:208, y:370},
+          4: {x:208, y:370},
+          5: {x:208, y:370},
+          6: {x:126, y:370},
+          7: {x:126, y:370},
+        },
+        'textFontSize': 26,
+        'descriptionFontSize': 28,
       },
       countBG: 8,  // 8 фоновоых картинок
       currentBG: this.rand(8), // 8 фоновоых картинок
@@ -243,20 +268,7 @@ export default {
     textPosition(type, x, y, fontSize) {
       this.coordinates[type].x = x;
       this.coordinates[type].y = y;
-      this.coordinates.fontSize = fontSize;
-      // console.log(this.coordinates)
-      // if (type == 'description') {
-      //   this.drawDescription();
-      // }
-      // if (type == 'sticker') {
-      //   this.drawSticker();
-      // }
-      // if (type == 'fromwhom') {
-      //   this.drawText('asdfasdasdf', 'from');
-      // }
-      // if (type == 'forwhom') {
-      //   this.drawText('asdfasdasdf', 'for');
-      // }
+      // this.coordinates.fontSize = fontSize;
     },
     editText() {
 
@@ -288,44 +300,77 @@ export default {
       ctxBG.drawImage(bgImg, 0, 0, this.canvasBG.width, this.canvasBG.height);
     },
     drawText(text, who = 'for') {
-      let ctx, x, y, fontSize, texts;
+      let ctx, x, y, fontSize, texts, maxLengthText;
 
       if (who == 'for') {
         ctx = this.ctxFromWhom;
       } else {
         ctx = this.ctxForWhom;
       }
-
-      x = this.coordinates[who == 'for' ? 'forwhom' : 'fromwhom'].x - 40;
-      y = this.coordinates[who == 'for' ? 'forwhom' : 'fromwhom'].y;
-      fontSize = this.coordinates.fontSize;
-      // text = 'От большой@любительницы@открыток';
+      x = Number(this.positions[who == 'for' ? 'forwhom' : 'fromwhom'][this.currentBG].x);
+      y = Number(this.positions[who == 'for' ? 'forwhom' : 'fromwhom'][this.currentBG].y);
+      fontSize = this.positions.textFontSize;
       texts = text.split('@');
+      maxLengthText = this.getMaxLengText(texts);
+
       this.clearCtx(ctx);
-      console.log(this.getMaxLengText(texts))
+
       // заливка фона градиентом
-      const gradient = ctx.createLinearGradient(20, 0, 358, 0);
-      gradient.addColorStop(1, "rgba(109, 192, 255, 0.28)");
-      gradient.addColorStop(0.29, "#1F5BD7");
+      const gradient = ctx.createLinearGradient(x + 20, 0, x + 358, 0);
+      gradient.addColorStop(0.04, "rgba(31, 91, 215, 0.29)");
+      gradient.addColorStop(0.9, "rgba(253, 138, 166, 0.13)");
+      gradient.addColorStop(0.6, "#1897F8");
       ctx.beginPath();
-      ctx.roundRect(x - fontSize - 20, y - fontSize - 20, this.getMaxLengText(texts) * 20, fontSize*3+texts.length*fontSize / 2, 50);
+      ctx.roundRect(x - fontSize - 20, y - fontSize - 20, maxLengthText * (fontSize - 8) + 30, fontSize*3+texts.length*fontSize / 2, 50);
       ctx.fillStyle = gradient;
       ctx.fill();
 
       // заливка текста/текстов
       texts.forEach(function(text, index) {
         ctx.font = "400 " + fontSize + "px GT Eesti Pro Text";
-        ctx.fillStyle = "#000000";
+        ctx.fillStyle = "#ffffff";
 
         // выравнивание нижних текстов относительно первого
-        x += index != 0 ? fontSize * (texts[0].length - text.length)/4 : 0;
-        ctx.fillText(text, x, y + (fontSize) * index);
+        let drawX;
+        drawX = text.length != maxLengthText ? x + (fontSize * (maxLengthText - text.length) / 4) : x + 0;
+        console.log(x);
+        console.log(y);
+        ctx.fillText(text, drawX, y + (fontSize + 3) * index);
       })
     },
     drawDescription(text = '') {
-      let ctx;
+      let ctx, x, y, fontSize, texts, maxLengthText;
       ctx = this.ctxDescription;
       this.clearCtx(ctx);
+
+      x = Number(this.positions['description'][this.currentBG].x);
+      y = Number(this.positions['description'][this.currentBG].y);
+      fontSize = this.positions.textFontSize;
+      texts = text.split('@');
+      maxLengthText = this.getMaxLengText(texts);
+
+      // заливка фона градиентом
+      const gradient = ctx.createLinearGradient(x + 20, 0, x + 358, 0);
+      gradient.addColorStop(1, "rgba(109, 192, 255, 0.28)");
+      gradient.addColorStop(0.29, "#1F5BD7");
+      ctx.beginPath();
+      ctx.roundRect(x - fontSize - 20, y - fontSize - 20, maxLengthText * (fontSize - 8) + 30, fontSize*3+texts.length*fontSize / 2, 50);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // заливка текста/текстов
+      texts.forEach(function(text, index) {
+        ctx.font = "400 " + fontSize + "px GT Eesti Pro Text";
+        ctx.fillStyle = "#ffffff";
+
+        // выравнивание нижних текстов относительно первого
+        let drawX;
+        drawX = text.length != maxLengthText ? x + (fontSize * (maxLengthText - text.length) / 4) : x + 0;
+        console.log(x);
+        console.log(y);
+        ctx.fillText(text, drawX, y + (fontSize + 3) * index);
+      })
+
       ctx.font = "400 3.354vw GT Eesti Pro Text";
       ctx.fillStyle = "#000000";
       ctx.fillText(text, 40, 120);
@@ -384,9 +429,21 @@ export default {
     clearSticker() {
       this.clearCtx(this.ctxSticker);
     },
+    clearForwhom() {
+      this.clearCtx(this.ctxForWhom);
+    },
+    clearFromwhom() {
+      this.clearCtx(this.ctxFromWhom);
+    },
     nextPage() {
       this.mergeLayers();
       this.$emit('updatePage', 'finish');
+    },
+    clearLayers() {
+      this.clearSticker();
+      this.clearDescription();
+      this.clearForwhom();
+      this.clearFromwhom();
     },
   },
   mounted() {
@@ -478,5 +535,11 @@ export default {
     color: green;
     resize: none;
   }
+}
+.html2canvasDescription {
+  //background: linear-gradient(99.15deg, rgba(31, 91, 215, 0.29) 3.58%, #1897F8 63.63%, rgba(253, 138, 166, 0.13) 97.76%);
+  border-radius: 2.604vw;
+  height: 5.208vw;
+  width: 2.604vw;
 }
 </style>

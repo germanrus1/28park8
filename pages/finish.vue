@@ -11,8 +11,7 @@
         </div>
         <!--      Правая часть-->
         <div class="generator-content__right">
-          <div class="description-img">
-          </div>
+          <a href="https://krugosvetka.nspk.ru/dash" target="_blank"><div class="description-img"></div></a>
           <div class="description-text_top">
             У вас получилась отличная открытка!
           </div>

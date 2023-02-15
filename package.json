@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@nuxtjs/style-resources": "^1.2.1",
+    "html2canvas": "^1.4.1",
     "sass": "^1.58.0",
     "sass-loader": "^10.4.1",
     "vue-dropdowns": "^1.1.2"

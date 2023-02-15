@@ -2,15 +2,15 @@
   <div>
     <div class="range">
       <input type="range" :min="0" :max="600" step="4" v-model="xModel" @change="changeCoordinates">
-      <span>{{xModel}}</span>
+      <input class="numbers" v-model="xModel" @change="changeCoordinates">
     </div>
     <div class="range">
       <input type="range" :min="0" :max="600" step="4" v-model="yModel" @change="changeCoordinates">
-      <span>{{yModel}}</span>
+      <input class="numbers" v-model="yModel" @change="changeCoordinates">
     </div>
     <div class="range">
       <input type="range" :min="10" :max="50" step="2" v-model="fontSizeModel" @change="changeCoordinates">
-      <span>{{fontSizeModel}}</span>
+      <input class="numbers" v-model="fontSizeModel" @change="changeCoordinates">
     </div>
   </div>
 </template>
@@ -31,8 +31,7 @@ export default {
   },
   methods: {
     changeCoordinates() {
-      console.log(this.fontSizeModel);
-      this.$emit('textPosition', 'fromwhom', this.xModel, this.yModel, this.fontSizeModel);
+      this.$emit('textPosition', 'description', this.xModel, this.yModel, this.fontSizeModel);
     }
   },
   mounted() {
@@ -47,8 +46,9 @@ export default {
       width: 30vw;
       height: 5vw;
     }
-    span {
+    .numbers {
       font-size: 3vw;
+      width: 7vw;
     }
   }
 </style>
