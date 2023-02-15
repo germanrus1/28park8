@@ -6,10 +6,10 @@ ENV APP_DIR /app/
 WORKDIR ${APP_DIR}
 
 COPY . ${APP_DIR}
-RUN npm install && npm cache clean --force
-
+RUN npm install
+RUN npm run build
 ENV HOST 0.0.0.0
 
-EXPOSE 80
-CMD ["npm", "run", "build"]
+EXPOSE 3000
+
 CMD ["node", "/app/.output/server/index.mjs"]
