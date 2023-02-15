@@ -1,0 +1,1 @@
+import{a as e,o as s,b as n,t as o,j as a}from"./entry.31175190.js";const _={name:"customButton",props:{text:{type:String},classes:{type:String}}};function c(r,p,t,u,l,i){return s(),n("button",{class:a(["button text",t.classes])},o(t.text),3)}const x=e(_,[["render",c],["__scopeId","data-v-a62b3c46"]]);export{x as _};
